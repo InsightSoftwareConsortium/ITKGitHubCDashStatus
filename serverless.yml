@@ -44,6 +44,18 @@ functions:
         x-azure-settings:
           direction: out
           name: res
+  pullRequestComment:
+    handler: handler.pullRequestComment
+    events:
+      - http: true
+        x-azure-settings:
+          webHookType: github
+          methods:
+            - post
+      - http: true
+        x-azure-settings:
+          direction: out
+          name: res
 
 # The following are a few examples of other events you can configure:
 #
