@@ -9,5 +9,8 @@
   ],
   "devDependencies": {
     "serverless-azure-functions": "*"
+  },
+  "dependencies": {
+    "axios": "^0.17.1"
   }
 }

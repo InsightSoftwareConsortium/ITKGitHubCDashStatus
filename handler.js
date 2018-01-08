@@ -1,5 +1,8 @@
 'use strict';
 
+const axios = require('axios')
+const process = require('process')
+
 /* eslint-disable no-param-reassign */
 
 module.exports.hello = function (context) {
@@ -14,9 +17,7 @@ module.exports.hello = function (context) {
 };
 
 module.exports.pullRequestComment = function (context, data) {
-  context.log('GitHub WebHook triggered!', data.number)
 
-   // context.log(context.req)
   const signature = context.req.headers['x-hub-signature']
   if(!signature) {
     const errorMsg = 'No x-hub-signature found on request'
@@ -35,8 +36,8 @@ module.exports.pullRequestComment = function (context, data) {
     return
   }
 
-  if(githubEvent !== 'pull_request') {
-    const errorMsg = 'Event was not pull_request - ignoring'
+  if(githubEvent !== 'status') {
+    const errorMsg = 'Event was not status - ignoring'
     console.log(errorMsg)
     context.res = { status: 204, body: '' }
     context.done()
@@ -51,25 +52,63 @@ module.exports.pullRequestComment = function (context, data) {
     context.done()
     return
   }
-//  context.log(data);
+  //context.log(data);
 
 
-  // Do custom stuff here with github event data
-  // For more on events see https://developer.github.com/v3/activity/events/types/
-  const commentsURL =  data.pull_request.comments_url
-  if(!commentsURL) {
-    const errorMsg = 'No comments_url found on request'
+  const statusPostURL =  data.repository.url + '/statuses/' + data.sha
+  if(!statusPostURL) {
+    const errorMsg = 'Expected status information not found on request'
     console.log(errorMsg)
     context.res = { status: 401, body: errorMsg }
     context.done()
     return
   }
 
+  // TODO: Remove meeee!
+  const owner = data.organization.login
+  const token = process.env.GITHUB_ACCESS_TOKEN
+
+  const headSha = data.sha
+  const headShaShort = headSha.substr(0, 7)
+  const cdashProject = 'Insight'
+  const cdashUrl = `https://open.cdash.org/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
+  let postCDashLinkStatus = false
+  const description = data.description.toLowerCase()
+  if(description.includes('build') || description.includes('test')) {
+    if(!data.description.toLowerCase().includes('cdash')) {
+      postCDashLinkStatus = true
+    }
+  }
+
+  const statusDescription = `View build and best results on CDash`
+  if(postCDashLinkStatus) {
+    const statusPayload = {
+      "state": data.state,
+      "target_url": cdashUrl,
+      "description": statusDescription,
+      "context": "continuous-integration/cdash"
+    }
+
+    return axios.post(statusPostURL,
+      statusPayload,
+      { auth: {
+          username: owner,
+          password: token
+          }
+      })
+      .then(function (response) {
+        context.log('CDash status post succeeded!')
+      })
+      .catch(function (error) {
+        context.log('CDash status post failed!')
+        context.log(error)
+      })
+  }
+
+
   context.res = {
     // status: 200, /* Defaults to 200 */
-    body: 'Go Serverless v1.x! Your function executed successfully!',
-  };
-
-  context.res = { headers: { "Content-Type": "application/json", "Accept": "application/vnd.github.v3.raw+json" }, body: 'New GitHub comment: yadda yadda' };
+    body: 'No CDash status post required.'
+  }
   context.done()
-};
+}
