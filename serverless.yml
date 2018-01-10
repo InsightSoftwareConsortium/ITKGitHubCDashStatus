@@ -1,4 +1,4 @@
-service: ITKGitHubCDashPRComment
+service: ITKGitHubCDashStatus
 
 provider:
   name: azure
