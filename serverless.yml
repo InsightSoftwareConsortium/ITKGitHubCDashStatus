@@ -10,16 +10,6 @@ plugins:
   - serverless-azure-functions
 
 functions:
-  hello:
-    handler: handler.hello
-    events:
-      - http: true
-        x-azure-settings:
-          authLevel : anonymous
-      - http: true
-        x-azure-settings:
-          direction: out
-          name: res
   pullRequestComment:
     handler: handler.pullRequestComment
     events:

@@ -5,17 +5,6 @@ const process = require('process')
 
 /* eslint-disable no-param-reassign */
 
-module.exports.hello = function (context) {
-  context.log('JavaScript HTTP trigger function processed a request.');
-
-  context.res = {
-    // status: 200, /* Defaults to 200 */
-    body: 'Go Serverless v1.x! Your function executed successfully!',
-  };
-
-  context.done();
-};
-
 module.exports.pullRequestComment = function (context, data) {
 
   const signature = context.req.headers['x-hub-signature']
@@ -97,6 +86,7 @@ module.exports.pullRequestComment = function (context, data) {
           }
       })
       .then(function (response) {
+        context.res = { body: 'CDash status post initiated!' }
         context.log('CDash status post succeeded!')
       })
       .catch(function (error) {
