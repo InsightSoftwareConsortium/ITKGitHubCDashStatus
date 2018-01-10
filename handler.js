@@ -5,7 +5,7 @@ const process = require('process')
 
 /* eslint-disable no-param-reassign */
 
-module.exports.pullRequestComment = function (context, data) {
+module.exports.pullRequestStatusWebhook = function (context, data) {
 
   const signature = context.req.headers['x-hub-signature']
   if(!signature) {

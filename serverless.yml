@@ -10,8 +10,8 @@ plugins:
   - serverless-azure-functions
 
 functions:
-  pullRequestComment:
-    handler: handler.pullRequestComment
+  pullRequestStatusWebhook:
+    handler: handler.pullRequestStatusWebhook
     events:
       - http: true
         x-azure-settings:
