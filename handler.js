@@ -1,6 +1,6 @@
 'use strict';
 
-const axios = require('axios')
+const createGitHubApp = require('github-app')
 const process = require('process')
 
 /* eslint-disable no-param-reassign */
@@ -52,9 +52,6 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
     return
   }
 
-  const owner = encodeURIComponent(data.organization.login)
-  const token = process.env.GITHUB_ACCESS_TOKEN
-
   const headSha = encodeURIComponent(data.sha)
   const headShaShort = headSha.substr(0, 7)
   const cdashProject = 'Insight'
@@ -67,30 +64,38 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
     }
   }
 
-  const statusDescription = `View build and best results on CDash`
+  const statusDescription = `View build and test results on CDash`
   if(postCDashLinkStatus) {
-    const statusPayload = {
-      "state": 'success',
-      "target_url": cdashUrl,
-      "description": statusDescription,
-      "context": "continuous-integration/cdash"
+    const app = createGitHubApp({
+        id: process.env.GITHUB_APP_ID,
+        cert: process.env.GITHUB_PRIVATE_KEY
+    })
+
+    const installationIds = {
+      'InsightSoftwareConsortium': 79916
     }
 
-    return axios.post(statusPostURL,
-      statusPayload,
-      { auth: {
-          username: owner,
-          password: token
-          }
-      })
-      .then(function (response) {
-        context.res = { body: 'CDash status post initiated!' }
+    return app.asInstallation(79916).then(function (github) {
+    // The following can be used to get the installations.
+    //return app.asApp().then(function (github) {
+      //github.integrations.getInstallations({}).then(context.log);
+      github.repos.createStatus({
+        owner: encodeURIComponent(data.organization.login),
+        repo: encodeURIComponent(data.repository.name),
+        sha: headSha,
+        "state": 'success',
+        "target_url": cdashUrl,
+        "description": statusDescription,
+        "context": "continuous-integration/cdash"
+      }).then(function (response) {
+        context.res = { body: 'CDash status post succeeded!' }
         context.log('CDash status post succeeded!')
-      })
-      .catch(function (error) {
+	context.done()
+      }).catch(function (error) {
         context.log('CDash status post failed!')
         context.log(error)
       })
+    })
   }
 
 

@@ -4,7 +4,8 @@ provider:
   name: azure
   location: East US
   environment:
-    GITHUB_ACCESS_TOKEN: ${env:GITHUB_ACCESS_TOKEN}
+    GITHUB_APP_ID: ${env:GITHUB_APP_ID}
+    GITHUB_PRIVATE_KEY: ${env:GITHUB_PRIVATE_KEY}
 
 plugins:
   - serverless-azure-functions

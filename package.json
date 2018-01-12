@@ -11,6 +11,6 @@
     "serverless-azure-functions": "*"
   },
   "dependencies": {
-    "axios": "^0.17.1"
+    "github-app": "^3.2.0"
   }
 }
