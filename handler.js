@@ -61,10 +61,12 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
     "ci/circleci: build-and-test", // ITK module builds
     "ci/circleci: build" // ITKSoftwareGuide builds
   ]
-  if(contextWithCTestBuilds.includes(data.context)) {
+  if (contextWithCTestBuilds.includes(data.context)) {
     const description = data.description.toLowerCase()
-    if(!description.includes('cdash')) {
-      postCDashLinkStatus = true
+    if (!description.includes('cdash')) {
+      if (!(data.state === 'pending')) {
+        postCDashLinkStatus = true
+      }
     }
   }
 
