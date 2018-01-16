@@ -94,7 +94,6 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
       }).then(function (response) {
         context.res = { body: 'CDash status post succeeded!' }
         context.log('CDash status post succeeded!')
-	context.done()
       }).catch(function (error) {
         context.log('CDash status post failed!')
         context.log(error)
