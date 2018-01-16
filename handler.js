@@ -57,8 +57,12 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
   const cdashProject = 'Insight'
   const cdashUrl = `https://open.cdash.org/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
   let postCDashLinkStatus = false
-  const description = data.description.toLowerCase()
-  if(description.includes('build') || description.includes('test')) {
+  const contextWithCTestBuilds = [
+    "ci/circleci: build-and-test", // ITK module builds
+    "ci/circleci: build" // ITKSoftwareGuide builds
+  ]
+  if(contextWithCTestBuilds.includes(data.context)) {
+    const description = data.description.toLowerCase()
     if(!description.includes('cdash')) {
       postCDashLinkStatus = true
     }
