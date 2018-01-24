@@ -3,7 +3,18 @@
 const createGitHubApp = require('github-app')
 const process = require('process')
 
-/* eslint-disable no-param-reassign */
+// GitHub Organization to open.cdash.org project.
+const cdashProjects = {
+  'InsightSoftwareConsortium': 'Insight',
+  'SimpleITK': 'SimpleITK'
+}
+
+// GitHub Organization to GitHub App Installation Id
+const installationIds = {
+  'InsightSoftwareConsortium': 79916,
+  'SimpleITK': 81507
+}
+
 
 module.exports.pullRequestStatusWebhook = function (context, data) {
 
@@ -52,9 +63,11 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
     return
   }
 
+  const organization = encodeURIComponent(data.organization.login)
+
   const headSha = encodeURIComponent(data.sha)
   const headShaShort = headSha.substr(0, 7)
-  const cdashProject = 'Insight'
+  const cdashProject = cdashProjects[organization]
   const cdashUrl = `https://open.cdash.org/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
   let postCDashLinkStatus = false
   const contextWithCTestBuilds = [
@@ -77,16 +90,13 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
         cert: process.env.GITHUB_PRIVATE_KEY
     })
 
-    const installationIds = {
-      'InsightSoftwareConsortium': 79916
-    }
-
-    return app.asInstallation(79916).then(function (github) {
+    return app.asInstallation(installationIds[organization]).then(function (github) {
     // The following can be used to get the installations.
     //return app.asApp().then(function (github) {
       //github.integrations.getInstallations({}).then(context.log);
+      // or this is available as data.installation.id
       github.repos.createStatus({
-        owner: encodeURIComponent(data.organization.login),
+        owner: organization,
         repo: encodeURIComponent(data.repository.name),
         sha: headSha,
         "state": 'success',
