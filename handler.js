@@ -3,10 +3,16 @@
 const createGitHubApp = require('github-app')
 const process = require('process')
 
-// GitHub Organization to open.cdash.org project.
+// GitHub Organization to CDash project.
 const cdashProjects = {
   'InsightSoftwareConsortium': 'Insight',
   'SimpleITK': 'SimpleITK'
+}
+
+// GitHub Organization to CDash instance
+const cdashInstances = {
+  'InsightSoftwareConsortium': 'open.cdash.org',
+  'SimpleITK': 'open.cdash.org'
 }
 
 // GitHub Organization to GitHub App Installation Id
@@ -68,7 +74,8 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
   const headSha = encodeURIComponent(data.sha)
   const headShaShort = headSha.substr(0, 7)
   const cdashProject = cdashProjects[organization]
-  const cdashUrl = `https://open.cdash.org/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
+  const cdashInstance = cdashInstances[organization]
+  const cdashUrl = `https://${cdashInstance}/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
   let postCDashLinkStatus = false
   const contextWithCTestBuilds = [
     "ci/circleci: build-and-test", // ITK module builds
