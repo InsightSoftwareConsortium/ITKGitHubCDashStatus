@@ -21,7 +21,7 @@ const cdashInstances = {
 const installationIds = {
   'InsightSoftwareConsortium': 79916,
   'SimpleITK': 81507,
-  'SuperElastix': 87249,
+  'SuperElastix': 87249
 }
 
 
@@ -82,7 +82,9 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
   let postCDashLinkStatus = false
   const contextWithCTestBuilds = [
     "ci/circleci: build-and-test", // ITK module builds
-    "ci/circleci: build" // ITKSoftwareGuide builds
+    "ci/circleci: build", // ITKSoftwareGuide builds
+    "continuous-integration/jenkins/pr-merge", // SuperElastix
+    "continuous-integration/jenkins/branch" // SuperElastix
   ]
   if (contextWithCTestBuilds.includes(data.context)) {
     const description = data.description.toLowerCase()
