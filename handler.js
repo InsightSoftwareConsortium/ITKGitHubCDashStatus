@@ -84,7 +84,14 @@ module.exports.pullRequestStatusWebhook = function (context, data) {
     "ci/circleci: build-and-test", // ITK module builds
     "ci/circleci: build", // ITKSoftwareGuide builds
     "continuous-integration/jenkins/pr-merge", // SuperElastix
-    "continuous-integration/jenkins/branch" // SuperElastix
+    "continuous-integration/jenkins/branch", // SuperElastix
+    "ITK.Linux", // ITK Azure Pipelines
+    "ITK.macOS", // ITK Azure Pipelines
+    "ITK.Windows", // ITK Azure Pipelines
+    "ITK.Linux.Python", // ITK Azure Pipelines
+    "ITK.macOS.Python", // ITK Azure Pipelines
+    "ITK.Windows.Python", // ITK Azure Pipelines
+    "InsightSoftwareConsortium.ITKExamples", // ITKExamples Azure Pipelines
   ]
   if (contextWithCTestBuilds.includes(data.context)) {
     const description = data.description.toLowerCase()
