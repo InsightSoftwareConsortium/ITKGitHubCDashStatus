@@ -56,17 +56,25 @@ module.exports = app => {
     if (postCDashLinkStatus) {
       let hasFailedBuild = false
       let buildsArePending = false
+      let hasBuild = false
       const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ 'ref': sha }))
       statusesForRef.data.forEach((status) => {
         if (contextWithCTestBuilds.includes(status.context)) {
           if (status.state === 'pending') {
             buildsArePending = true
           }
+          if (status.state !== 'pending') {
+            hasBuild = true
+          }
           if (status.state === 'error' || status.state === 'failure') {
             hasFailedBuild = true
           }
         }
       })
+      if (!hasBuild) {
+        context.log("No builds have completed yet.")
+        return
+      }
 
       const buildsResponse = await axios.get(`${cdashInstance}/api/v1/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}`)
       const data = buildsResponse.data
