@@ -1,40 +1,19 @@
-# ITKGitHubCDashStatus
+# itk-github-cdash-status
 
-This provides a GitHub pull request status link to the CDash page for the
-current patch's continuous integration builds.
+> A GitHub App built with [Probot](https://github.com/probot/probot) that to add a status check that summarizes CDash results.
 
-Build and deploy
-----------------
+## Setup
 
-```
-git clone https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus.git
-cd ITKGitHubCDashStatus
-# Possibly required if gyp pkg-config related error: sudo apt install libsecret-1-dev
+```sh
+# Install dependencies
 npm install
-npm install -g serverless
-# From https://github.com/organizations/InsightSoftwareConsortium/settings/apps/itkgithubcdashstatus
-export GITHUB_APP_ID=1234
-export GITHUB_PRIVATE_KEY=123456789abcd1536c09950c995ee7f2eae950e5
+
+# Run the bot
+npm start
 ```
 
-Debug
------
+## Contributing
 
-A live view of the logs:
+If you have suggestions for how itk-github-cdash-status could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
-```
-serverless logs -f pullRequestStatusWebhook -t
-```
-
-GitHub responses:
-
-https://github.com/organizations/InsightSoftwareConsortium/settings/apps/itkgithubcdashstatus/advanced
-
-Function deploy
----------------
-
-To deploy the function only:
-
-```
-serverless deploy -f pullRequestStatusWebhook
-```
+For more, check out the [Contributing Guide](CONTRIBUTING.md).

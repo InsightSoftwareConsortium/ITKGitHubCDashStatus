@@ -1,16 +1,55 @@
 {
-  "name": "azure-nodejs",
+  "name": "itk-github-cdash-status",
   "version": "1.0.0",
-  "description": "Azure Functions sample for the Serverless framework",
-  "main": "handler.js",
+  "description": "Add a status check that summarizes CDash results",
+  "author": "Matt McCormick <matt.mccormick@kitware.com> (https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus)",
+  "license": "ISC",
+  "repository": "https://github.com//ITKGitHubCDashStatus.git",
+  "homepage": "https://github.com//ITKGitHubCDashStatus",
+  "bugs": "https://github.com//ITKGitHubCDashStatus/issues",
   "keywords": [
-    "azure",
-    "serverless"
+    "probot",
+    "github",
+    "probot-app"
   ],
-  "devDependencies": {
-    "serverless-azure-functions": "*"
+  "scripts": {
+    "dev": "nodemon",
+    "start": "probot run ./index.js",
+    "lint": "standard --fix",
+    "test": "jest && standard",
+    "test:watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "dependencies": {
-    "github-app": "^3.2.0"
+    "axios": "^0.18.0",
+    "canvas": "^2.3.1",
+    "imgur": "^0.3.1",
+    "probot": "^7.2.0",
+    "vega": "^4.4.0",
+    "vega-lite": "^3.0.0-rc12"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "nock": "^10.0.0",
+    "nodemon": "^1.17.2",
+    "smee-client": "^1.0.2",
+    "standard": "^10.0.3"
+  },
+  "engines": {
+    "node": ">= 8.3.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      ".env",
+      "."
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
