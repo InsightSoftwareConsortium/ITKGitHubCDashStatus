@@ -216,22 +216,22 @@ module.exports = app => {
       const imageUrl = uploadResponse.data.link
       let summary = "Totals: "
       if (metricSums.configure) {
-        summary += `**${metricSums.configure}** configuration issues, `
+        summary += `**${metricSums.configure} configuration issues**, `
       } else {
         summary += `${metricSums.configure} configuration issues, `
       }
       if (metricSums.buildErrors) {
-        summary += `**${metricSums.buildErrors}** build errors, `
+        summary += `**${metricSums.buildErrors} build errors**, `
       } else {
         summary += `${metricSums.buildErrors} build errors, `
       }
       if (metricSums.buildWarnings) {
-        summary += `**${metricSums.buildWarnings}** build warnings, `
+        summary += `**${metricSums.buildWarnings} build warnings**, `
       } else {
         summary += `${metricSums.buildWarnings} build warnings, `
       }
       if (metricSums.testsFailed) {
-        summary += `**${metricSums.testsFailed}** test failures.`
+        summary += `**${metricSums.testsFailed} test failures**.`
       } else {
         summary += `${metricSums.testsFailed} test failures.`
       }
@@ -243,7 +243,7 @@ module.exports = app => {
         output: {
           title: 'CDash build analysis and visualization',
           summary,
-          text: `[![CDash build analysis summary](${imageUrl}) Build analysis summary for revision ${revision}.](${cdashUrl})`
+          text: `[![CDash build analysis summary](${imageUrl})](${cdashUrl}) Build analysis summary for revision ${revision}.`
           // images: [{ alt: "CDash build analysis summary", image_url: imageUrl, caption: "Build summary" }]
         }
       }
