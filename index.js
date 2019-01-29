@@ -24,6 +24,7 @@ const contextWithCTestBuilds = [
   'ci/circleci: build', // ITKSoftwareGuide builds
   'continuous-integration/jenkins/pr-merge', // SuperElastix
   'continuous-integration/jenkins/branch', // SuperElastix
+  'continuous-integration/travis-ci/pr', // SuperElastix
   'ITK.Linux', // ITK Azure Pipelines
   'ITK.macOS', // ITK Azure Pipelines
   'ITK.Windows', // ITK Azure Pipelines
