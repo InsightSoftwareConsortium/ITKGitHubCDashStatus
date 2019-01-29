@@ -6,6 +6,7 @@ const imgur = require('imgur')
 // GitHub Organization to CDash project.
 const cdashProjects = {
   'InsightSoftwareConsortium': 'Insight',
+  'KitwareMedical': 'Insight',
   'SimpleITK': 'SimpleITK',
   'SuperElastix': 'SuperElastix'
 }
@@ -13,6 +14,7 @@ const cdashProjects = {
 // GitHub Organization to CDash instance
 const cdashInstances = {
   'InsightSoftwareConsortium': 'https://open.cdash.org',
+  'KitwareMedical': 'https://open.cdash.org',
   'SimpleITK': 'https://open.cdash.org',
   'SuperElastix': 'http://trunk.cdash.org'
 }
