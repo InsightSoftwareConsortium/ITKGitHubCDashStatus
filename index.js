@@ -28,7 +28,8 @@ const contextWithCTestBuilds = [
   'ITK.Linux.Python', // ITK Azure Pipelines
   'ITK.macOS.Python', // ITK Azure Pipelines
   'ITK.Windows.Python', // ITK Azure Pipelines
-  'InsightSoftwareConsortium.ITKExamples' // ITKExamples Azure Pipelines
+  'InsightSoftwareConsortium.ITKExamples', // ITKExamples Azure Pipelines
+  'ci/circleci' // ITK CircleCI
 ]
 
 module.exports = app => {
@@ -55,13 +56,13 @@ module.exports = app => {
 
     if (postCDashLinkStatus) {
       let hasFailedBuild = false
-      let buildsArePending = false
       let hasBuild = false
       const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ 'ref': sha }))
+      const pendingBuilds = {}
       statusesForRef.data.forEach((status) => {
         if (contextWithCTestBuilds.includes(status.context)) {
           if (status.state === 'pending') {
-            buildsArePending = true
+            pendingBuilds[status.context] = true
           }
           if (status.state !== 'pending') {
             hasBuild = true
@@ -71,6 +72,21 @@ module.exports = app => {
           }
         }
       })
+      statusesForRef.data.forEach((status) => {
+        if (contextWithCTestBuilds.includes(status.context)) {
+          if (status.state !== 'pending') {
+            pendingBuilds[status.context] = false
+          }
+        }
+      })
+      let buildsArePending = false
+      for (let build in pendingBuilds) {
+        if(pendingBuilds[build]) {
+          buildsArePending = true
+          break
+        }
+      }
+
       if (!hasBuild) {
         context.log("No builds have completed yet.")
         return
@@ -241,9 +257,9 @@ module.exports = app => {
         head_sha: sha,
         details_url: cdashUrl,
         output: {
-          title: 'CDash build analysis and visualization',
+          title: 'Build analysis summary',
           summary,
-          text: `[![CDash build analysis summary](${imageUrl})](${cdashUrl}) Build analysis summary for revision ${revision}.`
+          text: `[![CDash build analysis summary](${imageUrl})](${cdashUrl}).`
           // images: [{ alt: "CDash build analysis summary", image_url: imageUrl, caption: "Build summary" }]
         }
       }
