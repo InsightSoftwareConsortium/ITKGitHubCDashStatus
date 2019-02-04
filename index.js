@@ -84,14 +84,14 @@ module.exports = app => {
       })
       let buildsArePending = false
       for (let build in pendingBuilds) {
-        if(pendingBuilds[build]) {
+        if (pendingBuilds[build]) {
           buildsArePending = true
           break
         }
       }
 
       if (!hasBuild) {
-        context.log("No builds have completed yet.")
+        context.log('No builds have completed yet.')
         return
       }
 
@@ -182,7 +182,7 @@ module.exports = app => {
           'metricIndicator': 0.0
         })
       })
-      const revision = data.filterdata.filters[0].value
+      // const revision = data.filterdata.filters[0].value
       const vegaLiteSpec = {
         $schema: 'https://vega.github.io/schema/vega-lite/v3.json',
         width: 800,
@@ -193,7 +193,7 @@ module.exports = app => {
           'y': {'field': 'site', 'type': 'ordinal', 'axis': {'title': 'Site'}},
           'x': {'field': 'metricName',
             'type': 'nominal',
-            'sort': ["Configure Warnings", "Configure Errors", "Build Warnings", "Build Errors", "Tests Failed", "Tests Passed", "Time"],
+            'sort': ['Configure Warnings', 'Configure Errors', 'Build Warnings', 'Build Errors', 'Tests Failed', 'Tests Passed', 'Time'],
             'axis': { 'title': null, 'labelAngle': 0, 'orient': 'bottom' } }
         },
         'layer': [{
@@ -234,7 +234,7 @@ module.exports = app => {
       const base64 = dataUrl.match(regex)[2]
       const uploadResponse = await imgur.uploadBase64(base64)
       const imageUrl = uploadResponse.data.link
-      let summary = "Totals: "
+      let summary = 'Totals: '
       if (metricSums.configure) {
         summary += `**${metricSums.configure} configuration issues**, `
       } else {
