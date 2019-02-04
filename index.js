@@ -192,7 +192,8 @@ module.exports = app => {
         'encoding': {
           'y': {'field': 'site', 'type': 'ordinal', 'axis': {'title': 'Site'}},
           'x': {'field': 'metricName',
-            'type': 'ordinal',
+            'type': 'nominal',
+            'sort': ["Configure Warnings", "Configure Errors", "Build Warnings", "Build Errors", "Tests Failed", "Tests Passed", "Time"],
             'axis': { 'title': null, 'labelAngle': 0, 'orient': 'bottom' } }
         },
         'layer': [{
