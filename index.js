@@ -19,21 +19,26 @@ const cdashInstances = {
   'SuperElastix': 'http://trunk.cdash.org'
 }
 // GitHub Status Context that generate CDash builds
-const contextWithCTestBuilds = [
-  'ci/circleci: build-and-test', // ITK module builds
-  'ci/circleci: build', // ITKSoftwareGuide builds
+const contextWithCTestBuildsPrefix = [
+  'ci/circleci', // ITKSoftwareGuide, ITK, SimpleITK builds
   'continuous-integration/jenkins/pr-merge', // SuperElastix
   'continuous-integration/jenkins/branch', // SuperElastix
   'continuous-integration/travis-ci/pr', // SuperElastix
+  'continuous-integration/appveyor/pr', // ITKTubeTK
   'ITK.Linux', // ITK Azure Pipelines
   'ITK.macOS', // ITK Azure Pipelines
   'ITK.Windows', // ITK Azure Pipelines
   'ITK.Linux.Python', // ITK Azure Pipelines
   'ITK.macOS.Python', // ITK Azure Pipelines
   'ITK.Windows.Python', // ITK Azure Pipelines
-  'InsightSoftwareConsortium.ITKExamples', // ITKExamples Azure Pipelines
-  'ci/circleci' // ITK CircleCI
+  'InsightSoftwareConsortium.', // ITKExamples, ITK modules Azure Pipelines
+  'SimpleITK.', // SimpleITK Azure Pipelines
+  'KitwareMedical.' // ITKTubeTK
 ]
+
+function contextHasCTestBuild (context) {
+  return contextWithCTestBuildsPrefix.filter((withCTest) => context.startsWith(withCTest)).length > 0
+}
 
 module.exports = app => {
   app.on(['status'], check)
@@ -48,7 +53,9 @@ module.exports = app => {
     const cdashInstance = cdashInstances[organization]
     const cdashUrl = `${cdashInstance}/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
     let postCDashLinkStatus = false
-    if (contextWithCTestBuilds.includes(context.payload.context)) {
+    context.log(context.payload.context)
+    context.log (contextHasCTestBuild(context.payload.context))
+    if (contextHasCTestBuild(context.payload.context)) {
       const description = context.payload.description.toLowerCase()
       if (!description.includes('cdash')) {
         postCDashLinkStatus = true
@@ -63,7 +70,7 @@ module.exports = app => {
       const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ 'ref': sha }))
       const pendingBuilds = {}
       statusesForRef.data.forEach((status) => {
-        if (contextWithCTestBuilds.includes(status.context)) {
+        if (contextHasCTestBuild(status.context)) {
           if (status.state === 'pending') {
             pendingBuilds[status.context] = true
           }
@@ -76,7 +83,7 @@ module.exports = app => {
         }
       })
       statusesForRef.data.forEach((status) => {
-        if (contextWithCTestBuilds.includes(status.context)) {
+        if (contextHasCTestBuild(status.context)) {
           if (status.state !== 'pending') {
             pendingBuilds[status.context] = false
           }
