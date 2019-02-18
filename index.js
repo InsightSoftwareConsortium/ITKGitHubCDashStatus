@@ -42,10 +42,21 @@ function contextHasCTestBuild (context) {
 
 module.exports = app => {
   app.on(['status'], check)
+  app.on(['check_suite.rerequested'], check)
+  app.on(['check_run.rerequested'], check)
 
   async function check (context) {
     context.log(`Received payload id: ${context.payload.id}`)
-    const { sha } = context.payload
+    // context.log(context.payload)
+    let sha = null
+    if (context.event === 'status') {
+      sha = context.payload.sha
+    } else if(context.event === 'check_run.rerequested') {
+      sha = context.payload.check_run.head_sha
+    } else {
+      // check_suite.rerequested
+      sha = context.payload.check_suite.head_sha
+    }
     const organization = context.payload.organization.login
     const headShaShort = sha.substr(0, 7)
 
@@ -53,16 +64,16 @@ module.exports = app => {
     const cdashInstance = cdashInstances[organization]
     const cdashUrl = `${cdashInstance}/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}&showfeed=0`
     let postCDashLinkStatus = false
-    context.log(context.payload.context)
-    context.log (contextHasCTestBuild(context.payload.context))
-    if (contextHasCTestBuild(context.payload.context)) {
-      const description = context.payload.description.toLowerCase()
-      if (!description.includes('cdash')) {
-        postCDashLinkStatus = true
+    if (context.event === 'status') {
+      if (contextHasCTestBuild(context.payload.context)) {
+        const description = context.payload.description.toLowerCase()
+        if (!description.includes('cdash')) {
+          postCDashLinkStatus = true
+        }
       }
+    } else {
+      postCDashLinkStatus = true
     }
-
-    // context.log(context.payload)
 
     if (postCDashLinkStatus) {
       let hasFailedBuild = false
