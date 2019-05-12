@@ -4,9 +4,9 @@
   "description": "Add a status check that summarizes CDash results",
   "author": "Matt McCormick <matt.mccormick@kitware.com> (https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus)",
   "license": "ISC",
-  "repository": "https://github.com//ITKGitHubCDashStatus.git",
-  "homepage": "https://github.com//ITKGitHubCDashStatus",
-  "bugs": "https://github.com//ITKGitHubCDashStatus/issues",
+  "repository": "https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus.git",
+  "homepage": "https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus",
+  "bugs": "https://github.com/InsightSoftwareConsortium/ITKGitHubCDashStatus/issues",
   "keywords": [
     "probot",
     "github",
