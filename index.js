@@ -40,6 +40,10 @@ function contextHasCTestBuild (context) {
   return contextWithCTestBuildsPrefix.filter((withCTest) => context.startsWith(withCTest)).length > 0
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 module.exports = app => {
   app.on(['status'], check)
   app.on(['check_suite.rerequested'], check)
@@ -113,7 +117,15 @@ module.exports = app => {
         return
       }
 
-      const buildsResponse = await axios.get(`${cdashInstance}/api/v1/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}`)
+      let buildsResponse = {}
+      for(let attempt in [1, 2, 3, 4]) {
+        buildsResponse = await axios.get(`${cdashInstance}/api/v1/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}`)
+        // Wait for CDash to process the initial build
+        if (buildsResponse.data.buildgroups.length > 0) {
+          break
+        }
+        await sleep(2000)
+      }
       const data = buildsResponse.data
       const metricExtrema = {
         'configureErrors': 0,
