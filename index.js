@@ -84,6 +84,7 @@ module.exports = app => {
       let hasBuild = false
       const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ 'ref': sha }))
       const pendingBuilds = {}
+      let successAndFailureCount = 0
       statusesForRef.data.forEach((status) => {
         if (contextHasCTestBuild(status.context)) {
           if (status.state === 'pending') {
@@ -94,6 +95,10 @@ module.exports = app => {
           }
           if (status.state === 'error' || status.state === 'failure') {
             hasFailedBuild = true
+            successAndFailureCount++
+          }
+          if (status.state === 'success') {
+            successAndFailureCount++
           }
         }
       })
@@ -316,7 +321,14 @@ module.exports = app => {
       }))
       const createNewCheck = existingChecks.data.total_count < 1
       if (createNewCheck) {
-        return context.github.checks.create(context.repo(checkParameters))
+        // Only create the check when a check does not exist and this is the
+        // initial success or failure
+        if (successAndFailureCount >= 1) {
+          return context.github.checks.create(context.repo(checkParameters))
+        } else {
+          context.log('Skipping check creation')
+          return
+        }
       } else {
         checkParameters['check_run_id'] = existingChecks.data.check_runs[0]['id']
         return context.github.checks.update(context.repo(checkParameters))
