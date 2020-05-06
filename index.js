@@ -40,8 +40,8 @@ function contextHasCTestBuild (context) {
   return contextWithCTestBuildsPrefix.filter((withCTest) => context.startsWith(withCTest)).length > 0
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 module.exports = app => {
@@ -55,7 +55,7 @@ module.exports = app => {
     let sha = null
     if (context.event === 'status') {
       sha = context.payload.sha
-    } else if(context.event === 'check_run.rerequested') {
+    } else if (context.event === 'check_run.rerequested') {
       sha = context.payload.check_run.head_sha
     } else {
       // check_suite.rerequested
@@ -123,7 +123,7 @@ module.exports = app => {
       }
 
       let buildsResponse = {}
-      for(let attempt in [1, 2, 3, 4]) {
+      for (let attempt in [1, 2, 3, 4]) {  // eslint-disable-line
         buildsResponse = await axios.get(`${cdashInstance}/api/v1/index.php?project=${cdashProject}&filtercount=1&showfilters=0&field1=revision&compare1=63&value1=${headShaShort}`)
         // Wait for CDash to process the initial build
         if (buildsResponse.data.buildgroups.length > 0) {
@@ -327,7 +327,6 @@ module.exports = app => {
           return context.github.checks.create(context.repo(checkParameters))
         } else {
           context.log('Skipping check creation')
-          return
         }
       } else {
         checkParameters['check_run_id'] = existingChecks.data.check_runs[0]['id']
