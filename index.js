@@ -33,7 +33,8 @@ const contextWithCTestBuildsPrefix = [
   'ITK.Windows.Python', // ITK Azure Pipelines
   'InsightSoftwareConsortium.', // ITKExamples, ITK modules Azure Pipelines
   'SimpleITK.', // SimpleITK Azure Pipelines
-  'KitwareMedical.' // ITKTubeTK
+  'KitwareMedical.', // ITKTubeTK
+  'Build, test, package / build-test-cxx' // GitHub Actions for remote modules
 ]
 
 function contextHasCTestBuild (context) {
