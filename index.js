@@ -5,18 +5,18 @@ const imgur = require('imgur')
 
 // GitHub Organization to CDash project.
 const cdashProjects = {
-  'InsightSoftwareConsortium': 'Insight',
-  'KitwareMedical': 'Insight',
-  'SimpleITK': 'SimpleITK',
-  'SuperElastix': 'SuperElastix'
+  InsightSoftwareConsortium: 'Insight',
+  KitwareMedical: 'Insight',
+  SimpleITK: 'SimpleITK',
+  SuperElastix: 'SuperElastix'
 }
 
 // GitHub Organization to CDash instance
 const cdashInstances = {
-  'InsightSoftwareConsortium': 'https://open.cdash.org',
-  'KitwareMedical': 'https://open.cdash.org',
-  'SimpleITK': 'https://open.cdash.org',
-  'SuperElastix': 'http://trunk.cdash.org'
+  InsightSoftwareConsortium: 'https://open.cdash.org',
+  KitwareMedical: 'https://open.cdash.org',
+  SimpleITK: 'https://open.cdash.org',
+  SuperElastix: 'http://trunk.cdash.org'
 }
 // GitHub Status Context that generate CDash builds
 const contextWithCTestBuildsPrefix = [
@@ -83,7 +83,7 @@ module.exports = app => {
     if (postCDashLinkStatus) {
       let hasFailedBuild = false
       let hasBuild = false
-      const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ 'ref': sha }))
+      const statusesForRef = await context.github.repos.listStatusesForRef(context.repo({ ref: sha }))
       const pendingBuilds = {}
       let successAndFailureCount = 0
       statusesForRef.data.forEach((status) => {
@@ -111,7 +111,7 @@ module.exports = app => {
         }
       })
       let buildsArePending = false
-      for (let build in pendingBuilds) {
+      for (const build in pendingBuilds) {
         if (pendingBuilds[build]) {
           buildsArePending = true
           break
@@ -134,12 +134,12 @@ module.exports = app => {
       }
       const data = buildsResponse.data
       const metricExtrema = {
-        'configureErrors': 0,
-        'configureWarnings': 0,
-        'buildErrors': 0,
-        'buildWarnings': 0,
-        'testsFailed': 0,
-        'testsPassed': 0
+        configureErrors: 0,
+        configureWarnings: 0,
+        buildErrors: 0,
+        buildWarnings: 0,
+        testsFailed: 0,
+        testsPassed: 0
       }
       const metricSums = {
         configure: 0,
@@ -176,85 +176,88 @@ module.exports = app => {
       data.buildgroups[0].builds.forEach((build) => {
         const site = `${build.site} - ${build.buildplatform}`
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Configure Errors',
-          'metricValue': build.configure.error,
-          'metricIndicator': build.configure.error ? -1.0 * build.configure.error / metricExtrema.configureErrors : 0.0
+          site: site,
+          metricName: 'Configure Errors',
+          metricValue: build.configure.error,
+          metricIndicator: build.configure.error ? -1.0 * build.configure.error / metricExtrema.configureErrors : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Configure Warnings',
-          'metricValue': build.configure.warning,
-          'metricIndicator': build.configure.warning ? -1.0 * build.configure.warning / metricExtrema.configureWarnings : 0.0
+          site: site,
+          metricName: 'Configure Warnings',
+          metricValue: build.configure.warning,
+          metricIndicator: build.configure.warning ? -1.0 * build.configure.warning / metricExtrema.configureWarnings : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Build Errors',
-          'metricValue': build.compilation.error,
-          'metricIndicator': build.compilation.error ? -1.0 * build.compilation.error / metricExtrema.buildErrors : 0.0
+          site: site,
+          metricName: 'Build Errors',
+          metricValue: build.compilation.error,
+          metricIndicator: build.compilation.error ? -1.0 * build.compilation.error / metricExtrema.buildErrors : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Build Warnings',
-          'metricValue': build.compilation.warning,
-          'metricIndicator': build.compilation.warning ? -1.0 * build.compilation.warning / metricExtrema.buildWarnings : 0.0
+          site: site,
+          metricName: 'Build Warnings',
+          metricValue: build.compilation.warning,
+          metricIndicator: build.compilation.warning ? -1.0 * build.compilation.warning / metricExtrema.buildWarnings : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Tests Failed',
-          'metricValue': build.test.fail,
-          'metricIndicator': build.test.fail ? -1.0 * build.test.fail / metricExtrema.testsFailed : 0.0
+          site: site,
+          metricName: 'Tests Failed',
+          metricValue: build.test.fail,
+          metricIndicator: build.test.fail ? -1.0 * build.test.fail / metricExtrema.testsFailed : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Tests Passed',
-          'metricValue': build.test.pass,
-          'metricIndicator': build.test.pass ? 1.0 * build.test.pass / metricExtrema.testsPassed : 0.0
+          site: site,
+          metricName: 'Tests Passed',
+          metricValue: build.test.pass,
+          metricIndicator: build.test.pass ? 1.0 * build.test.pass / metricExtrema.testsPassed : 0.0
         })
         vegaDataValues.push({
-          'site': site,
-          'metricName': 'Time',
-          'metricValue': build.time,
-          'metricIndicator': 0.0
+          site: site,
+          metricName: 'Time',
+          metricValue: build.time,
+          metricIndicator: 0.0
         })
       })
       // const revision = data.filterdata.filters[0].value
       const vegaLiteSpec = {
         $schema: 'https://vega.github.io/schema/vega-lite/v3.json',
         width: 800,
-        data: { values: vegaDataValues,
+        data: {
+          values: vegaDataValues,
           name: 'source'
         },
-        'encoding': {
-          'y': {'field': 'site', 'type': 'ordinal', 'axis': {'title': 'Site'}},
-          'x': {'field': 'metricName',
-            'type': 'nominal',
-            'sort': ['Configure Warnings', 'Configure Errors', 'Build Warnings', 'Build Errors', 'Tests Failed', 'Tests Passed', 'Time'],
-            'axis': { 'title': null, 'labelAngle': 0, 'orient': 'bottom' } }
+        encoding: {
+          y: { field: 'site', type: 'ordinal', axis: { title: 'Site' } },
+          x: {
+            field: 'metricName',
+            type: 'nominal',
+            sort: ['Configure Warnings', 'Configure Errors', 'Build Warnings', 'Build Errors', 'Tests Failed', 'Tests Passed', 'Time'],
+            axis: { title: null, labelAngle: 0, orient: 'bottom' }
+          }
         },
-        'layer': [{
-          'mark': 'rect',
-          'encoding': {
-            'color': {
-              'field': 'metricIndicator',
-              'type': 'quantitative',
-              'legend': null,
-              'scale': { 'domain': [-1.0, 1.0], 'scheme': 'pinkyellowgreen' }
+        layer: [{
+          mark: 'rect',
+          encoding: {
+            color: {
+              field: 'metricIndicator',
+              type: 'quantitative',
+              legend: null,
+              scale: { domain: [-1.0, 1.0], scheme: 'pinkyellowgreen' }
             }
           }
         }, {
-          'mark': 'text',
-          'encoding': {
-            'text': {'field': 'metricValue', 'type': 'ordinal'},
-            'color': {
-              'condition': {'test': 'datum.metricIndicator > -0.3 && datum.metricIndicator < 0.3', 'value': 'black'},
-              'value': 'white'
+          mark: 'text',
+          encoding: {
+            text: { field: 'metricValue', type: 'ordinal' },
+            color: {
+              condition: { test: 'datum.metricIndicator > -0.3 && datum.metricIndicator < 0.3', value: 'black' },
+              value: 'white'
             }
           }
         }],
-        'config': {
-          'scale': {'bandPaddingInner': 0, 'bandPaddingOuter': 0},
-          'text': {'baseline': 'middle'}
+        config: {
+          scale: { bandPaddingInner: 0, bandPaddingOuter: 0 },
+          text: { baseline: 'middle' }
         }
       }
       const { spec } = vl.compile(vegaLiteSpec)
@@ -307,14 +310,14 @@ module.exports = app => {
       if (buildsArePending) {
         checkStatus = 'in_progress'
       } else {
-        checkParameters['completed_at'] = new Date()
+        checkParameters.completed_at = new Date()
         if (hasFailedBuild) {
-          checkParameters['conclusion'] = 'failure'
+          checkParameters.conclusion = 'failure'
         } else {
-          checkParameters['conclusion'] = 'success'
+          checkParameters.conclusion = 'success'
         }
       }
-      checkParameters['status'] = checkStatus
+      checkParameters.status = checkStatus
 
       const existingChecks = await context.github.checks.listForRef(context.repo({
         check_name: 'CDash',
@@ -330,7 +333,7 @@ module.exports = app => {
           context.log('Skipping check creation')
         }
       } else {
-        checkParameters['check_run_id'] = existingChecks.data.check_runs[0]['id']
+        checkParameters.check_run_id = existingChecks.data.check_runs[0].id
         return context.github.checks.update(context.repo(checkParameters))
       }
     } else {
